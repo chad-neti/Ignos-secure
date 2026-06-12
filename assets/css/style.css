@@ -4,9 +4,9 @@
    ============================================================ */
 
 :root {
-  /* Brand colours sampled from the Ignis Secure logo */
-  --brand-red: #B1383A;
-  --brand-red-dark: #93292B;
+  /* Brand colours. Navy from the logo, with a soft blue accent. */
+  --brand-red: #3A6BAA;       /* soft blue accent (legacy token name) */
+  --brand-red-dark: #2F5E99;  /* accent hover */
   --brand-blue: #264F88;
   --brand-blue-dark: #1C3D6B;
 
@@ -442,7 +442,7 @@ summary:focus-visible {
 
 .cta-band h2 { color: #fff; margin-top: 0; }
 .cta-band p { color: #C9D3E4; max-width: 56ch; }
-.cta-band .kicker { color: #E8B9B9; }
+.cta-band .kicker { color: #B9CDEC; }
 
 /* ---------- Contact ---------- */
 
@@ -582,12 +582,12 @@ table.spec-table {
 .site-footer li { margin-bottom: var(--space-1); }
 
 .site-footer a { color: #fff; }
-.site-footer a:hover { color: #E8B9B9; }
+.site-footer a:hover { color: #B9CDEC; }
 
 .footer-brand .footer-tagline {
   font-family: var(--font-serif);
   font-style: italic;
-  color: #E8B9B9;
+  color: #B9CDEC;
 }
 
 .footer-bottom {
