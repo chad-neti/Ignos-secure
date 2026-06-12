@@ -1,0 +1,52 @@
+name: Deploy preview to GitHub Pages
+
+on:
+  push:
+    branches: [claude/new-session-v4melv, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Build site with Pages base path
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          mkdir -p _site
+          rsync -a --exclude '_site' --exclude '.git' --exclude '.github' ./ _site/
+          if [ -n "$BASE_PATH" ]; then
+            find _site -name '*.html' -print0 | xargs -0 sed -i \
+              -e "s|href=\"/|href=\"$BASE_PATH/|g" \
+              -e "s|src=\"/|src=\"$BASE_PATH/|g" \
+              -e "s|srcset=\"/|srcset=\"$BASE_PATH/|g" \
+              -e "s|action=\"/|action=\"$BASE_PATH/|g"
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
