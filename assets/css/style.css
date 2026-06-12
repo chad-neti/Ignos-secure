@@ -233,9 +233,31 @@ summary:focus-visible {
   margin: 0;
   padding: 0 0 var(--space-1) 12px;
   display: none;
+  max-height: 62vh;
+  overflow-y: auto;
 }
 .site-nav .submenu-toggle[aria-expanded="true"] + .submenu { display: block; }
 .submenu a[aria-current="page"] { color: var(--brand-red); }
+
+.site-nav .submenu-soon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  cursor: default;
+}
+.site-nav .submenu-soon em {
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8A93A3;
+  flex: none;
+}
 
 @media (min-width: 880px) {
   .has-submenu { position: relative; }
@@ -244,16 +266,18 @@ summary:focus-visible {
     position: absolute;
     top: 100%;
     left: 0;
-    min-width: 230px;
+    min-width: 240px;
     padding: 6px;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: 0 10px 30px rgba(27, 45, 74, 0.14);
+    max-height: min(70vh, 460px);
     z-index: 60;
   }
   .site-nav .submenu-toggle[aria-expanded="true"] + .submenu { display: block; }
-  .submenu a { white-space: nowrap; }
+  .submenu a,
+  .submenu-soon { white-space: nowrap; }
 }
 
 /* ---------- Buttons ---------- */
