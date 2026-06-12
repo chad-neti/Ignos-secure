@@ -106,10 +106,28 @@
         <span>Menu</span>
       </button>
       <nav id="site-nav" class="site-nav" aria-label="Main navigation">
-        <ul>
+        <ul class="nav-menu">
           <li><a href="/">Home</a></li>
-          <li><a href="/services/">Services</a></li>
-          <li><a href="/#areas">Areas We Cover</a></li>
+          <li class="has-submenu">
+            <button type="button" class="submenu-toggle" aria-expanded="false" aria-controls="submenu-services">
+              Services
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <ul id="submenu-services" class="submenu">
+              <li><a href="/services/">All Services</a></li>
+              <li><a href="/fire-alarm-installation/">Fire Alarm Installation</a></li>
+            </ul>
+          </li>
+          <li class="has-submenu">
+            <button type="button" class="submenu-toggle" aria-expanded="false" aria-controls="submenu-areas">
+              Areas We Cover
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <ul id="submenu-areas" class="submenu">
+              <li><a href="/#areas">All Areas</a></li>
+              <li><a href="/fire-alarm-installation-uxbridge/">Uxbridge</a></li>
+            </ul>
+          </li>
           <li><a href="/#contact">Contact</a></li>
         </ul>
       </nav>
