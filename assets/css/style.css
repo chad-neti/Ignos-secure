@@ -531,6 +531,20 @@ summary:focus-visible {
 }
 .card-read-more:hover { color: var(--brand-blue); }
 
+/* Stretched link — makes entire card clickable */
+.card--linked { position: relative; cursor: pointer; }
+.card--linked .card-stretch-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.card--linked .btn,
+.card--linked .card-read-more {
+  position: relative;
+  z-index: 1;
+}
+
 
 /* Areas grid: plain text towns, only live pages are links */
 .areas-grid {
