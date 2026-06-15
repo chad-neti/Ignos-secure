@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Areas We Cover | Ignis Secure</title>
+  <meta name="description" content="Ignis Secure covers Uxbridge, Hillingdon, Hayes, Ruislip, Harrow, Ealing, Hounslow and the wider London area. Fire alarm, CCTV and security specialists.">
+  <link rel="canonical" href="https://www.ignissecure.co.uk/areas/">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="/assets/css/style.css?v=5">
+  <style>
+    #coverage-map {
+      height: 600px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(27,45,74,0.18);
+    }
+
+    /* Override Leaflet defaults to match brand */
+    .leaflet-container {
+      font-family: 'Outfit', sans-serif;
+      background: #111827;
+    }
+
+    .leaflet-control-zoom a {
+      font-family: 'Outfit', sans-serif;
+      color: #264F88;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 0.65rem;
+      background: rgba(27,45,74,0.75) !important;
+      color: #93A3BD !important;
+    }
+
+    .leaflet-control-attribution a { color: #B9CDEC !important; }
+
+    /* Custom tooltip */
+    .map-tooltip {
+      background: #1B2D4A;
+      border: 1px solid #264F88;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 5px 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      white-space: nowrap;
+    }
+
+    .map-tooltip::before {
+      border-top-color: #264F88 !important;
+    }
+
+    .leaflet-tooltip-bottom.map-tooltip::before {
+      border-bottom-color: #264F88 !important;
+    }
+
+    /* Area tag grid */
+    .area-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: var(--space-4);
+    }
+
+    .area-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--wash);
+      border: 1px solid var(--line);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      transition: background 150ms, border-color 150ms, color 150ms;
+    }
+
+    .area-tag:hover,
+    .area-tag.active {
+      background: var(--brand-blue);
+      border-color: var(--brand-blue);
+      color: #fff;
+    }
+
+    .area-tag .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--brand-blue);
+      flex: none;
+      transition: background 150ms;
+    }
+
+    .area-tag:hover .dot,
+    .area-tag.active .dot {
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo-link" href="/" aria-label="Ignis Secure Limited home">
+        <picture>
+          <source srcset="/assets/img/ignis-secure-logo.webp" type="image/webp">
+          <img src="/assets/img/ignis-secure-logo.png" alt="Ignis Secure Limited, Fire and Security Specialists" width="560" height="166">
+        </picture>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <span>Menu</span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+        <ul class="nav-menu">
+          <li><a href="/">Home</a></li>
+          <li class="has-submenu">
+            <button type="button" class="submenu-toggle" aria-expanded="false" aria-controls="submenu-services">
+              Services
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <ul id="submenu-services" class="submenu">
+              <li><a href="/services/">All Services</a></li>
+              <li><a href="/fire-alarm-installation/">Fire Alarm Installation</a></li>
+              <li><span class="submenu-soon" aria-disabled="true">Fire Alarm Maintenance <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">CCTV Installation <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Access Control <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Electrical Services <em>Soon</em></span></li>
+            </ul>
+          </li>
+          <li class="has-submenu">
+            <button type="button" class="submenu-toggle current" aria-expanded="false" aria-controls="submenu-areas">
+              Areas We Cover
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <ul id="submenu-areas" class="submenu">
+              <li><a href="/areas/" aria-current="page">All Areas</a></li>
+              <li><a href="/fire-alarm-installation-uxbridge/">Uxbridge</a></li>
+              <li><span class="submenu-soon" aria-disabled="true">Hillingdon <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Hayes <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">West Drayton <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Yiewsley <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Ruislip <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Ickenham <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Eastcote <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Northwood <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Harefield <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Pinner <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Harrow <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Greenford <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Southall <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Ealing <em>Soon</em></span></li>
+              <li><span class="submenu-soon" aria-disabled="true">Hounslow <em>Soon</em></span></li>
+            </ul>
+          </li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-primary header-cta" href="tel:+441895000000">Call 01895 000 000</a>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <div class="page-head">
+      <div class="container">
+        <span class="kicker">Where we work</span>
+        <h1>Areas We Cover</h1>
+        <p class="lead">We are based in West London and carry out fire alarm, CCTV, access control and electrical work across Uxbridge, Hillingdon and the wider London area. Hover the map to explore where we work.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="tel:+441895000000">Call 01895 000 000</a>
+          <a class="btn btn-quiet" href="/#contact">Request a free quote</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="section" aria-labelledby="map-heading">
+      <div class="container">
+        <h2 id="map-heading" style="margin-top:0;">Our coverage area</h2>
+        <p class="section-intro">The shaded zone shows our primary service area. We work across all the locations below and are happy to travel further, so give us a call if you are not sure whether we cover you.</p>
+
+        <div id="coverage-map" role="img" aria-label="Interactive map showing Ignis Secure coverage across West London"></div>
+
+        <div class="area-tags" id="area-tags" aria-label="Areas we cover">
+          <a class="area-tag" href="/fire-alarm-installation-uxbridge/" data-area="Uxbridge"><span class="dot"></span>Uxbridge</a>
+          <span class="area-tag" data-area="Hillingdon"><span class="dot"></span>Hillingdon</span>
+          <span class="area-tag" data-area="Hayes"><span class="dot"></span>Hayes</span>
+          <span class="area-tag" data-area="West Drayton"><span class="dot"></span>West Drayton</span>
+          <span class="area-tag" data-area="Yiewsley"><span class="dot"></span>Yiewsley</span>
+          <span class="area-tag" data-area="Ruislip"><span class="dot"></span>Ruislip</span>
+          <span class="area-tag" data-area="Ickenham"><span class="dot"></span>Ickenham</span>
+          <span class="area-tag" data-area="Eastcote"><span class="dot"></span>Eastcote</span>
+          <span class="area-tag" data-area="Northwood"><span class="dot"></span>Northwood</span>
+          <span class="area-tag" data-area="Harefield"><span class="dot"></span>Harefield</span>
+          <span class="area-tag" data-area="Pinner"><span class="dot"></span>Pinner</span>
+          <span class="area-tag" data-area="Harrow"><span class="dot"></span>Harrow</span>
+          <span class="area-tag" data-area="Greenford"><span class="dot"></span>Greenford</span>
+          <span class="area-tag" data-area="Southall"><span class="dot"></span>Southall</span>
+          <span class="area-tag" data-area="Ealing"><span class="dot"></span>Ealing</span>
+          <span class="area-tag" data-area="Hounslow"><span class="dot"></span>Hounslow</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-wash" aria-labelledby="not-listed-heading">
+      <div class="container">
+        <span class="kicker">Not sure?</span>
+        <h2 id="not-listed-heading" style="margin-top:0;">Don't see your area listed?</h2>
+        <p class="section-intro">We are flexible about where we travel and regularly take on work outside the areas listed. Give us a call or send a message and we will let you know whether we can help.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="tel:+441895000000">Call 01895 000 000</a>
+          <a class="btn btn-quiet" href="/#contact">Send an enquiry</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="container">
+        <span class="kicker">Free site surveys</span>
+        <h2>Book a free survey in your area</h2>
+        <p>We arrange a free, no obligation site survey for most jobs. You get a clear written quotation and a straight answer on what your building needs.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="tel:+441895000000">Call 01895 000 000</a>
+          <a class="btn btn-quiet" href="/#contact" style="color:#fff;border-color:#fff;">Send an enquiry</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <p style="color:#fff;font-weight:700;font-size:1.1rem;margin-bottom:4px;">Ignis Secure Limited</p>
+          <p class="footer-tagline">Fire &amp; Security Specialists</p>
+          <p>Fire alarm, CCTV, access control and electrical services for homes and businesses across West London.</p>
+        </div>
+        <div>
+          <h2>Pages</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/fire-alarm-installation/">Fire Alarm Installation</a></li>
+            <li><a href="/fire-alarm-installation-uxbridge/">Fire Alarms Uxbridge</a></li>
+            <li><a href="/blog/how-often-should-a-fire-alarm-be-serviced/">Fire alarm servicing guide</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Areas we cover</h2>
+          <ul>
+            <li><a href="/fire-alarm-installation-uxbridge/">Uxbridge</a></li>
+            <li>Hillingdon</li>
+            <li>Hayes</li>
+            <li>Ruislip</li>
+            <li>Harrow</li>
+            <li>Ealing and West London</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Contact</h2>
+          <ul>
+            <li><a href="tel:+441895000000">01895 000 000</a></li>
+            <li><a href="mailto:info@ignissecure.co.uk">info@ignissecure.co.uk</a></li>
+            <li>Uxbridge, West London</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Ignis Secure Limited. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/main.js?v=4" defer></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const BRAND_BLUE  = '#264F88';
+    const BRAND_LIGHT = '#3A6BAA';
+    const NAVY        = '#1B2D4A';
+
+    // Boroughs that are within our primary service area
+    const SERVICE_BOROUGHS = ['Hillingdon', 'Harrow', 'Ealing', 'Hounslow'];
+
+    const areas = [
+      { name: 'Uxbridge',     lat: 51.5467, lng: -0.4796, primary: true },
+      { name: 'Hillingdon',   lat: 51.5441, lng: -0.4582 },
+      { name: 'Hayes',        lat: 51.5069, lng: -0.4182 },
+      { name: 'West Drayton', lat: 51.5038, lng: -0.4762 },
+      { name: 'Yiewsley',     lat: 51.5104, lng: -0.4724 },
+      { name: 'Ruislip',      lat: 51.5713, lng: -0.4246 },
+      { name: 'Ickenham',     lat: 51.5573, lng: -0.4488 },
+      { name: 'Eastcote',     lat: 51.5689, lng: -0.3883 },
+      { name: 'Northwood',    lat: 51.6168, lng: -0.4231 },
+      { name: 'Harefield',    lat: 51.6060, lng: -0.4818 },
+      { name: 'Pinner',       lat: 51.5929, lng: -0.3801 },
+      { name: 'Harrow',       lat: 51.5793, lng: -0.3355 },
+      { name: 'Greenford',    lat: 51.5241, lng: -0.3469 },
+      { name: 'Southall',     lat: 51.5129, lng: -0.3784 },
+      { name: 'Ealing',       lat: 51.5130, lng: -0.3089 },
+      { name: 'Hounslow',     lat: 51.4668, lng: -0.3614 },
+    ];
+
+    const map = L.map('coverage-map', {
+      center: [51.505, -0.180],
+      zoom: 10,
+      scrollWheelZoom: false,
+      zoomControl: true,
+    });
+
+    // Dark branded tile layer
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // --- London borough boundary polygons via GeoJSON ---
+    var boroughLayer;
+
+    function boroughStyle(isService) {
+      return {
+        color:       isService ? BRAND_LIGHT : 'rgba(150,185,240,0.75)',
+        weight:      isService ? 2.5 : 1.5,
+        fillColor:   isService ? BRAND_BLUE : '#223A5E',
+        fillOpacity: isService ? 0.30 : 0.18,
+        opacity:     1,
+      };
+    }
+
+    function boroughHoverStyle(isService) {
+      return {
+        color:       '#fff',
+        weight:      2.5,
+        fillColor:   isService ? BRAND_LIGHT : '#3A6BAA',
+        fillOpacity: isService ? 0.55 : 0.40,
+        opacity:     1,
+      };
+    }
+
+    fetch('https://raw.githubusercontent.com/radoi90/housequest-data/master/london_boroughs.geojson')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        boroughLayer = L.geoJSON(data, {
+          style: function(feature) {
+            var n = feature.properties.name || '';
+            var isService = SERVICE_BOROUGHS.some(function(b) { return n.indexOf(b) !== -1; });
+            return boroughStyle(isService);
+          },
+          onEachFeature: function(feature, layer) {
+            var name = feature.properties.name || '';
+            var isService = SERVICE_BOROUGHS.some(function(b) { return name.indexOf(b) !== -1; });
+
+            layer.on('mouseover', function(e) {
+              layer.setStyle(boroughHoverStyle(isService));
+              layer.bringToFront();
+              layer.bindTooltip(
+                name + (isService ? ' <span style="font-size:0.75em;opacity:0.7">(service area)</span>' : ''),
+                { className: 'map-tooltip', sticky: true }
+              ).openTooltip(e.latlng);
+            });
+
+            layer.on('mousemove', function(e) {
+              layer.getTooltip() && layer.getTooltip().setLatLng(e.latlng);
+            });
+
+            layer.on('mouseout', function() {
+              boroughLayer.resetStyle(layer);
+              layer.closeTooltip();
+              // Re-bring service area town markers to front
+              serviceMarkers.forEach(function(m) { m.bringToFront(); });
+            });
+          }
+        }).addTo(map);
+
+        // Bring town markers to front after polygons load
+        serviceMarkers.forEach(function(m) { m.bringToFront(); });
+      })
+      .catch(function() {
+        // GeoJSON failed silently — map still works with town markers
+      });
+
+    // Coverage zone dashed outline
+    L.polygon([
+      [51.630, -0.500],
+      [51.630, -0.360],
+      [51.595, -0.305],
+      [51.525, -0.295],
+      [51.455, -0.320],
+      [51.450, -0.430],
+      [51.490, -0.505],
+      [51.580, -0.510],
+    ], {
+      color: BRAND_LIGHT,
+      weight: 2,
+      opacity: 0.7,
+      fillColor: 'transparent',
+      fillOpacity: 0,
+      dashArray: '6 4',
+      interactive: false,
+    }).addTo(map);
+
+    // --- Service area town markers ---
+    var serviceMarkers = [];
+    const markerMap = {};
+
+    areas.forEach(function(area) {
+      const radius = area.primary ? 9 : 6;
+
+      const marker = L.circleMarker([area.lat, area.lng], {
+        radius: radius,
+        color: '#fff',
+        weight: 2,
+        fillColor: BRAND_BLUE,
+        fillOpacity: 1,
+        zIndexOffset: 1000,
+      }).addTo(map);
+
+      marker.bindTooltip(area.name, {
+        className: 'map-tooltip',
+        direction: 'top',
+        offset: [0, -8],
+      });
+
+      marker.on('mouseover', function() {
+        this.setStyle({ fillColor: BRAND_LIGHT, radius: radius + 3 });
+        this.openTooltip();
+        highlightTag(area.name, true);
+      });
+
+      marker.on('mouseout', function() {
+        this.setStyle({ fillColor: BRAND_BLUE, radius: radius });
+        this.closeTooltip();
+        highlightTag(area.name, false);
+      });
+
+      markerMap[area.name] = marker;
+      serviceMarkers.push(marker);
+    });
+
+    // Tag hover syncs back to map marker (service area towns only)
+    document.querySelectorAll('.area-tag[data-area]').forEach(function(tag) {
+      const name = tag.dataset.area;
+      const marker = markerMap[name];
+      if (!marker) return;
+
+      tag.addEventListener('mouseenter', function() {
+        const area = areas.find(function(a) { return a.name === name; });
+        const radius = area && area.primary ? 9 : 6;
+        marker.setStyle({ fillColor: BRAND_LIGHT, radius: radius + 3 });
+        marker.openTooltip();
+        tag.classList.add('active');
+      });
+
+      tag.addEventListener('mouseleave', function() {
+        const area = areas.find(function(a) { return a.name === name; });
+        const radius = area && area.primary ? 9 : 6;
+        marker.setStyle({ fillColor: BRAND_BLUE, radius: radius });
+        marker.closeTooltip();
+        tag.classList.remove('active');
+      });
+    });
+
+    function highlightTag(name, on) {
+      const tag = document.querySelector('.area-tag[data-area="' + name + '"]');
+      if (tag) tag.classList.toggle('active', on);
+    }
+  }); // end DOMContentLoaded
+  </script>
+</body>
+</html>
