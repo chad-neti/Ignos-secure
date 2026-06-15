@@ -391,6 +391,9 @@ summary:focus-visible {
   .hero { min-height: 640px; }
 }
 
+.hero--short { min-height: 360px; }
+@media (min-width: 768px) { .hero--short { min-height: 420px; } }
+
 /* ---------- Trust bar ---------- */
 
 .trust-bar {
